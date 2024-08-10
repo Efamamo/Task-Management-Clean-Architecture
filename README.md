@@ -85,9 +85,7 @@ usecases
   - user_repository.go: Handles database interactions related to users, such as retrieving user information and storing new users.
 
 - ### usecases/
-  - task_repository_interface.go: Defines the interface for the task repository, promoting a decoupled architecture.
   - task_usecase.go: Contains the business logic for tasks, coordinating between the repository and controllers.
-  - user_repository_interface.go: Defines the interface for the user repository.
   - user_usecase.go: Encapsulates the business logic related to user actions, such as registration and authentication.
 
 ## Clean Architecture
