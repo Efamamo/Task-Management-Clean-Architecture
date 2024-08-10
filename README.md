@@ -15,40 +15,42 @@ The project is organized into the following structure:
 
 ```plaintext
 task_manager
-│   .env
-│   go.mod
-│   go.sum
-│   
-├───delivery
-│   │   main.go
-│   │   
-│   ├───controllers
-│   │       task_controller.go
-│   │       user_controller.go
-│   │
-│   └───router
-│           router.go
-│
-├───docs
-│       api_documentation.md
-│
-├───domain
-│       domain.go
-│
-├───infrastructure
-│       auth_middleware.go
-│       jwt_services.go
-│       password_service.go
-│
-├───repositories
-│       task_repository.go
-│       user_repository.go
-│
-└───usecases
-        task_repository_interface.go
+.env
+go.mod
+go.sum
+    
+Delivery
+    main.go
+    
+    controllers
+        task_controller.go
+        user_controller.go
+
+    router
+        router.go
+
+docs
+    api_documentation.md
+ 
+domain
+    domain.go
+    error
+        errors.go
+
+infrastructure
+    auth_middleware.go
+    jwt_services.go
+    password_service.go
+ 
+repositories
+    task_repository.go
+    user_repository.go
+
+usecases
+        interfaces.go
         task_usecase.go
-        user_repository_interface.go
         user_usecase.go
+
 ### File/Folder Descriptions
 
 - .env: Configuration file that stores environment variables, such as database connection strings, JWT secret keys, and other sensitive information.
