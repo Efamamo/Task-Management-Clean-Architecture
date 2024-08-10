@@ -47,9 +47,9 @@ repositories
     user_repository.go
 
 usecases
-        interfaces.go
-        task_usecase.go
-        user_usecase.go
+    interfaces.go
+    task_usecase.go
+    user_usecase.go
 ```
 
 ### File/Folder Descriptions
@@ -149,6 +149,6 @@ The project follows the principles of Clean Architecture to ensure a robust, mai
 ```
 
 3. Run the application:
-   ```sh
+```sh
       go run Delivery/main.go
-   ```
+```
