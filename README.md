@@ -14,7 +14,6 @@ This project is a backend and API service for a task management application, bui
 The project is organized into the following structure:
 
 ```plaintext
-task_manager
 .env
 go.mod
 go.sum
