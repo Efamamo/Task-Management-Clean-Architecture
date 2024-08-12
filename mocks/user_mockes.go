@@ -15,17 +15,7 @@ type MockUserRepository struct {
 func (m *MockUserRepository) SignUp(user domain.User) (*domain.User, error) {
 	args := m.Called(user)
 
-	var userPtr *domain.User
-	if u := args.Get(0); u != nil {
-		var ok bool
-		if userPtr, ok = u.(*domain.User); !ok {
-			panic(fmt.Sprintf("expected *domain.User but got %T", u))
-		}
-	}
-	if err := args.Error(1); err != nil && !isErrorType(err) {
-		panic(fmt.Sprintf("expected error type but got %T", err))
-	}
-	return userPtr, args.Error(1)
+	return args.Get(0).(*domain.User), args.Error(1)
 }
 
 func (m *MockUserRepository) PromoteUser(username string) (bool, error) {

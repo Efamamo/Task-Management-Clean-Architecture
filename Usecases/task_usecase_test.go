@@ -17,7 +17,7 @@ type TaskSuite struct {
 	mockRepo    *mocks.MockTaskRepository
 }
 
-func TestUserSuite(t *testing.T) {
+func TestTaskSuite(t *testing.T) {
 	suite.Run(t, new(TaskSuite))
 }
 

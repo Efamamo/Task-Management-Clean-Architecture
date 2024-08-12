@@ -22,16 +22,18 @@ func AuthMiddleware(isAdmin bool) gin.HandlerFunc {
 			return
 		}
 
-		token, e := ValidateToken(authParts[1])
+		t := Token{}
+
+		token, e := t.ValidateToken(authParts[1])
 
 		if e != nil {
 			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": e.Error()})
 			c.Abort()
 			return
 		}
-		
+
 		if isAdmin {
-			allow := ValidateAdmin(token)
+			allow := t.ValidateAdmin(token)
 
 			if !allow {
 				c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Forbidden"})

@@ -3,11 +3,12 @@ package usecases
 import (
 	domain "github.com/Task-Management-go/Domain"
 	"github.com/Task-Management-go/Domain/err"
-	infrastructure "github.com/Task-Management-go/Infrastructure"
 )
 
 type UserService struct {
-	UserRepo IUserRepository
+	UserRepo        IUserRepository
+	PasswordService IPasswordService
+	JwtService      IJWTService
 }
 
 func (us *UserService) SignUp(user domain.User) (*domain.User, error) {
@@ -19,8 +20,7 @@ func (us *UserService) SignUp(user domain.User) (*domain.User, error) {
 	if count == 0 {
 		user.IsAdmin = true
 	}
-
-	hashedPassword, e := infrastructure.HashPassword(user.Password)
+	hashedPassword, e := us.PasswordService.HashPassword(user.Password)
 	if e != nil {
 		return nil, err.NewValidation("Password Cant Be Hashed")
 	}
@@ -43,11 +43,11 @@ func (us *UserService) Login(user domain.User) (string, error) {
 		return "", e
 	}
 
-	_, e = infrastructure.ComparePassword(existingUser.Password, user.Password)
+	_, e = us.PasswordService.ComparePassword(existingUser.Password, user.Password)
 	if e != nil {
 		return "", e
 	}
-	jwtToken, err := infrastructure.GenerateToken(existingUser.Username, existingUser.IsAdmin)
+	jwtToken, err := us.JwtService.GenerateToken(existingUser.Username, existingUser.IsAdmin)
 
 	if err != nil {
 		return "", e

@@ -5,7 +5,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func HashPassword(password string) (string, error) {
+type Pass struct{}
+
+func (p Pass) HashPassword(password string) (string, error) {
 	hashedPassword, e := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	if e != nil {
@@ -14,7 +16,7 @@ func HashPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-func ComparePassword(euPassword string, uPassword string) (bool, error) {
+func (p Pass) ComparePassword(euPassword string, uPassword string) (bool, error) {
 
 	if bcrypt.CompareHashAndPassword([]byte(euPassword), []byte(uPassword)) != nil {
 		return false, err.NewUnauthorized("Invalid Credentials")

@@ -9,7 +9,9 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func ValidateToken(t string) (*jwt.Token, error) {
+type Token struct{}
+
+func (tok Token) ValidateToken(t string) (*jwt.Token, error) {
 	token, e := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -24,7 +26,7 @@ func ValidateToken(t string) (*jwt.Token, error) {
 	return token, nil
 }
 
-func ValidateAdmin(token *jwt.Token) bool {
+func (tok Token) ValidateAdmin(token *jwt.Token) bool {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
 		return false
@@ -38,7 +40,7 @@ func ValidateAdmin(token *jwt.Token) bool {
 	return true
 }
 
-func GenerateToken(username string, isAdmin bool) (string, error) {
+func (tok Token) GenerateToken(username string, isAdmin bool) (string, error) {
 	expirationTime := time.Now().Add(20 * time.Minute).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

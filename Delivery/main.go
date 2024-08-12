@@ -7,6 +7,7 @@ import (
 
 	controller "github.com/Task-Management-go/Delivery/controllers"
 	"github.com/Task-Management-go/Delivery/router"
+	infrastructure "github.com/Task-Management-go/Infrastructure"
 	repository "github.com/Task-Management-go/Repository"
 	usecases "github.com/Task-Management-go/Usecases"
 	"github.com/joho/godotenv"
@@ -37,11 +38,13 @@ func main() {
 	}
 
 	var TaskRepository usecases.ITaskRepository = repository.NewTaskRepo(client)
+	var PasswordService usecases.IPasswordService = infrastructure.Pass{}
+	var JwtService usecases.IJWTService = infrastructure.Token{}
 	taskService := usecases.TaskService{TaskRepo: TaskRepository}
 	taskController := controller.TaskController{Service: taskService}
 
 	var UserRepository usecases.IUserRepository = repository.NewUserRepo(client)
-	UserService := usecases.UserService{UserRepo: UserRepository}
+	UserService := usecases.UserService{UserRepo: UserRepository, PasswordService: PasswordService, JwtService: JwtService}
 	userController := controller.UserController{Service: UserService}
 
 	router.SetUpRouter(taskController, userController)
