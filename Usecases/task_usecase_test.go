@@ -27,26 +27,13 @@ func (suite *TaskSuite) SetupTest() {
 }
 
 func (suite *TaskSuite) TestGetTasks() {
-	id := primitive.NewObjectID()
-	tasks := []domain.Task{
-		{ID: id,
-			Title:       "Class work",
-			Description: "Do class WOrk",
-			DueDate:     time.Now(),
-			Status:      "In Progress",
-		},
-		{ID: id,
-			Title:       "Home work",
-			Description: "Do Home WOrk",
-			DueDate:     time.Now(),
-			Status:      "Completed",
-		},
-		{ID: id,
-			Title:       "Exam",
-			Description: "Do Exam WOrk",
-			DueDate:     time.Now(),
-			Status:      "Pending",
-		},
+	task1Id, _ := primitive.ObjectIDFromHex("66b90802a6d354d828cd8f1a")
+	task2Id, _ := primitive.ObjectIDFromHex("66b918ff59c53bc04a1d2594")
+	task3Id, _ := primitive.ObjectIDFromHex("66b9ab13c65b0b36f13c5a5c")
+	var tasks = []domain.Task{
+		{ID: task1Id, Title: "Task 1", Description: "First task", DueDate: time.Now(), Status: "Pending"},
+		{ID: task2Id, Title: "Task 2", Description: "Second task", DueDate: time.Now().AddDate(0, 0, 1), Status: "In Progress"},
+		{ID: task3Id, Title: "Task 3", Description: "Third task", DueDate: time.Now().AddDate(0, 0, 2), Status: "Completed"},
 	}
 	suite.mockRepo.On("FindAll").Return(&tasks, nil)
 
@@ -65,18 +52,12 @@ func (suite *TaskSuite) TestGetTasks() {
 }
 
 func (suite *TaskSuite) TestGetSingleTask() {
-	id := primitive.NewObjectID()
-	task := domain.Task{
-		ID:          id,
-		Title:       "Class work",
-		Description: "Do class WOrk",
-		DueDate:     time.Now(),
-		Status:      "In Progress",
-	}
+	taskId, _ := primitive.ObjectIDFromHex("66b90802a6d354d828cd8f1a")
+	task := domain.Task{ID: taskId, Title: "Task 1", Description: "First task", DueDate: time.Now(), Status: "Pending"}
 
-	suite.mockRepo.On("FindOne", id).Return(&task, nil)
+	suite.mockRepo.On("FindOne", taskId).Return(&task, nil)
 
-	t, err := suite.taskService.GetTaskByID(id.Hex())
+	t, err := suite.taskService.GetTaskByID(string(taskId.Hex()))
 
 	suite.Equal(task.Title, t.Title)
 	suite.Equal(task.Description, t.Description)
@@ -98,30 +79,19 @@ func (suite *TaskSuite) TestErrorGetSingleTask() {
 }
 
 func (suite *TaskSuite) TestUpdateTask() {
-	id := primitive.NewObjectID()
-	task := domain.Task{
-		ID:          id,
-		Title:       "Class work",
-		Description: "Do class WOrk",
-		DueDate:     time.Now(),
-		Status:      "Completed",
-	}
+	taskId, _ := primitive.ObjectIDFromHex("66b90802a6d354d828cd8f1a")
+	task := domain.Task{ID: taskId, Title: "Task 1", Description: "First task", DueDate: time.Now(), Status: "Pending"}
 
-	suite.mockRepo.On("UpdateOne", id, task).Return(nil)
+	suite.mockRepo.On("UpdateOne", taskId, task).Return(nil)
 
-	err := suite.taskService.UpdateItem(id.Hex(), task)
+	err := suite.taskService.UpdateItem(taskId.Hex(), task)
 	suite.NoError(err)
 
 }
 
 func (suite *TaskSuite) TestUpdateTask_InputError() {
-	id := primitive.NewObjectID()
-	task := domain.Task{
-		ID:          id,
-		Title:       "Class work",
-		Description: "Do class WOrk",
-		DueDate:     time.Now(),
-	}
+	id, _ := primitive.ObjectIDFromHex("66b90802a6d354d828cd8f1a")
+	task := domain.Task{ID: id, Title: "Task 1", Description: "First task", DueDate: time.Now(), Status: "Pending"}
 
 	suite.mockRepo.On("UpdateOne", id, task).Return(errors.New("status error"))
 
@@ -131,14 +101,8 @@ func (suite *TaskSuite) TestUpdateTask_InputError() {
 }
 
 func (suite *TaskSuite) TestDeleteTask() {
-	id := primitive.NewObjectID()
-	task := domain.Task{
-		ID:          id,
-		Title:       "Class work",
-		Description: "Do class WOrk",
-		DueDate:     time.Now(),
-		Status:      "Completed",
-	}
+	id, _ := primitive.ObjectIDFromHex("66b90802a6d354d828cd8f1a")
+	task := domain.Task{ID: id, Title: "Task 1", Description: "First task", DueDate: time.Now(), Status: "Pending"}
 
 	suite.mockRepo.On("DeleteOne", id).Return(&task, nil)
 
@@ -167,14 +131,8 @@ func (suite *TaskSuite) TestDeleteTask_NotFound() {
 }
 
 func (suite *TaskSuite) TestSaveTask() {
-	id := primitive.NewObjectID()
-	task := domain.Task{
-		ID:          id,
-		Title:       "Class work",
-		Description: "Do class WOrk",
-		DueDate:     time.Now(),
-		Status:      "Completed",
-	}
+	taskId, _ := primitive.ObjectIDFromHex("66b90802a6d354d828cd8f1f")
+	task := domain.Task{ID: taskId, Title: "Task 4", Description: "Fourth task", DueDate: time.Now(), Status: "Pending"}
 
 	suite.mockRepo.On("Save", task).Return(&task, nil)
 
@@ -192,18 +150,12 @@ func (suite *TaskSuite) TestSaveTask() {
 }
 
 func (suite *TaskSuite) TestSaveTask_InvalidData() {
-	id := primitive.NewObjectID()
-	task := domain.Task{
-		ID:          id,
-		Description: "Do class WOrk",
-		DueDate:     time.Now(),
-		Status:      "Completed",
-	}
+	taskId, _ := primitive.ObjectIDFromHex("66b90802a6d354d828cd8f1b")
+	task := domain.Task{ID: taskId, Description: "First task", DueDate: time.Now(), Status: "Pending"}
 
 	suite.mockRepo.On("Save", task).Return(&task, errors.New("Title is Required"))
 
 	_, err := suite.taskService.AddTask(task)
-
 	suite.EqualError(err, "Title is Required")
 
 }
