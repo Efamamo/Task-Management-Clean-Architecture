@@ -54,19 +54,14 @@ func (tr *TaskRepository) FindAll() (*[]domain.Task, error) {
 
 }
 
-func (tr *TaskRepository) FindOne(id string) (*domain.Task, error) {
+func (tr *TaskRepository) FindOne(id primitive.ObjectID) (*domain.Task, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	objectId, e := primitive.ObjectIDFromHex(id)
-	if e != nil {
-		return nil, err.NewValidation("invalid ID format")
-	}
-
-	filter := bson.M{"_id": objectId}
+	filter := bson.M{"_id": id}
 
 	var task domain.Task
-	e = tr.collection.FindOne(ctx, filter).Decode(&task)
+	e := tr.collection.FindOne(ctx, filter).Decode(&task)
 	if e != nil {
 		if e == mongo.ErrNoDocuments {
 			return nil, err.NewNotFound("task not found")
@@ -77,16 +72,9 @@ func (tr *TaskRepository) FindOne(id string) (*domain.Task, error) {
 	return &task, nil
 }
 
-func (tr *TaskRepository) UpdateOne(id string, updatedTask domain.Task) error {
+func (tr *TaskRepository) UpdateOne(ID primitive.ObjectID, updatedTask domain.Task) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
-	_, e := tr.FindOne(id)
-	if e != nil {
-		return e
-	}
-
-	ID, _ := primitive.ObjectIDFromHex(id)
 
 	filter := bson.M{"_id": ID}
 
@@ -100,7 +88,7 @@ func (tr *TaskRepository) UpdateOne(id string, updatedTask domain.Task) error {
 	}
 
 	// Update the document that matches the filter
-	_, e = tr.collection.UpdateOne(ctx, filter, update)
+	_, e := tr.collection.UpdateOne(ctx, filter, update)
 	if e != nil {
 		return err.NewUnauthorized("Server Error")
 	}
@@ -108,21 +96,16 @@ func (tr *TaskRepository) UpdateOne(id string, updatedTask domain.Task) error {
 
 }
 
-func (tr *TaskRepository) DeleteOne(ID string) (*domain.Task, error) {
+func (tr *TaskRepository) DeleteOne(ID primitive.ObjectID) (*domain.Task, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	id, e := primitive.ObjectIDFromHex(ID)
-
-	if e != nil {
-		return nil, err.NewValidation("invalid ID format")
-	}
 
 	task, e := tr.FindOne(ID)
 	if e != nil {
 		return nil, err.NewNotFound("Task Not Found")
 	}
 
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": ID}
 
 	// Delete the document that matches the filter
 	_, e = tr.collection.DeleteOne(ctx, filter)

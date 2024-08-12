@@ -7,7 +7,7 @@ import (
 )
 
 type UserService struct {
-	UserRepo UserInterface
+	UserRepo IUserRepository
 }
 
 func (us *UserService) SignUp(user domain.User) (*domain.User, error) {
@@ -20,11 +20,11 @@ func (us *UserService) SignUp(user domain.User) (*domain.User, error) {
 		user.IsAdmin = true
 	}
 
-	hashedPassword, e := infrastructure.HashPassword(user.Password)
-	if e != nil {
-		return nil, err.NewValidation("Password Cant Be Hashed")
-	}
-	user.Password = hashedPassword
+	// hashedPassword, e := infrastructure.HashPassword(user.Password)
+	// if e != nil {
+	// 	return nil, err.NewValidation("Password Cant Be Hashed")
+	// }
+	// user.Password = hashedPassword
 
 	u, e := us.UserRepo.SignUp(user)
 

@@ -5,10 +5,12 @@ import (
 	"strings"
 
 	domain "github.com/Task-Management-go/Domain"
+	"github.com/Task-Management-go/Domain/err"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TaskService struct {
-	TaskRepo TaskInterface
+	TaskRepo ITaskRepository
 }
 
 func (ts *TaskService) GetTasks() (*[]domain.Task, error) {
@@ -22,7 +24,11 @@ func (ts *TaskService) GetTasks() (*[]domain.Task, error) {
 }
 
 func (ts *TaskService) GetTaskByID(id string) (*domain.Task, error) {
-	task, err := ts.TaskRepo.FindOne(id)
+	objectId, e := primitive.ObjectIDFromHex(id)
+	if e != nil {
+		return nil, err.NewValidation("invalid ID format")
+	}
+	task, err := ts.TaskRepo.FindOne(objectId)
 	if err != nil {
 		return nil, err
 	}
@@ -35,10 +41,15 @@ func (ts *TaskService) UpdateItem(ID string, updatedTask domain.Task) error {
 		return errors.New("status error")
 	}
 
-	err := ts.TaskRepo.UpdateOne(ID, updatedTask)
+	objectId, e := primitive.ObjectIDFromHex(ID)
+	if e != nil {
+		return err.NewValidation("invalid ID format")
+	}
 
-	if err != nil {
-		return err
+	e = ts.TaskRepo.UpdateOne(objectId, updatedTask)
+
+	if e != nil {
+		return e
 	}
 
 	return nil
@@ -46,8 +57,12 @@ func (ts *TaskService) UpdateItem(ID string, updatedTask domain.Task) error {
 }
 
 func (ts *TaskService) DeleteTask(ID string) (*domain.Task, error) {
+	objectId, e := primitive.ObjectIDFromHex(ID)
+	if e != nil {
+		return nil, err.NewValidation("invalid ID format")
+	}
 
-	task, err := ts.TaskRepo.DeleteOne(ID)
+	task, err := ts.TaskRepo.DeleteOne(objectId)
 
 	if err != nil {
 		return nil, err

@@ -29,6 +29,7 @@ func AuthMiddleware(isAdmin bool) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		
 		if isAdmin {
 			allow := ValidateAdmin(token)
 

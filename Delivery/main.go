@@ -36,11 +36,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var TaskRepository usecases.TaskInterface = repository.NewTaskRepo(client)
+	var TaskRepository usecases.ITaskRepository = repository.NewTaskRepo(client)
 	taskService := usecases.TaskService{TaskRepo: TaskRepository}
 	taskController := controller.TaskController{Service: taskService}
 
-	var UserRepository usecases.UserInterface = repository.NewUserRepo(client)
+	var UserRepository usecases.IUserRepository = repository.NewUserRepo(client)
 	UserService := usecases.UserService{UserRepo: UserRepository}
 	userController := controller.UserController{Service: UserService}
 
