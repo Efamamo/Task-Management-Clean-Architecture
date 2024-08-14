@@ -149,5 +149,6 @@ The project follows the principles of Clean Architecture to ensure a robust, mai
 
 3. Run the application:
 ```sh
-      go run Delivery/main.go
+    cd Delivery
+    go run .
 ```
